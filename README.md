@@ -1,158 +1,118 @@
-🛒 Backend — API de Supermercado (Node.js + Express + MongoDB)
+# 🛒 Backend — API de Supermercado com Inteligência Artificial
 
-Este é o backend do sistema de Supermercado, desenvolvido com Node.js, Express, MongoDB e Mongoose.
-A API gerencia produtos, promoções e usuários, com autenticação segura via JWT.
+Este é o backend do sistema de E-commerce, desenvolvido com Node.js, Express, MongoDB e integrado ao **Google Gemini AI** e **ChromaDB**.
+A API gerencia produtos, promoções e usuários, e agora conta com um **Assistente Inteligente (RAG)** que atua como um "Chat do Mercado" capaz de sugerir compras personalizadas baseadas no orçamento do cliente e no estoque.
 
-O projeto segue o padrão MVC (Models, Controllers e Routes) e utiliza middlewares para validação de token, tornando o backend modular, escalável e seguro.
-📌 Funcionalidades
-🛍 Produtos
+## 📌 Funcionalidades
 
-Listar todos os produtos
+### 🤖 Assistente de Inteligência Artificial (RAG)
+- **Chat do Mercado:** Recebe perguntas em linguagem natural (ex: "Quero fazer um café da manhã para 4 pessoas gastando até R$50").
+- **Busca Semântica:** Utiliza o banco de dados vetorial **ChromaDB** para buscar os produtos mais relevantes em milissegundos.
+- **Raciocínio com Gemini:** Integração com o Google Gemini Flash para processar o estoque recuperado, calcular preços, quantidades e formatar um JSON estruturado com recomendações.
 
-Buscar produto por ID
+### 🛍 Produtos
+- CRUD Completo (Listar, Buscar, Criar, Editar, Excluir).
+- Aplicar promoções automaticamente (data, porcentagem e preço final).
+- Scripts automáticos (`scripts/seed_products.js` e `scripts/seed_vectors.js`) para popular o banco de dados e sincronizar o ChromaDB.
 
-Criar produto
+### 👤 Usuários e Segurança
+- Autenticação com JWT e senhas criptografadas com Bcrypt.
+- Middleware de segurança protegendo rotas privadas (`auth-middleware.js`).
 
-Editar produto
+## 🚀 Tecnologias Utilizadas
 
-Excluir produto
+- **Node.js & Express**
+- **MongoDB Atlas & Mongoose**
+- **Google Generative AI (Gemini Flash)**
+- **ChromaDB** (via Docker)
+- **JSON Web Token (JWT) & Bcrypt.js**
+- **Arquitetura MVC Modular**
 
-Aplicar promoções automaticamente (data, porcentagem e preço final)
+## 📁 Estrutura do projeto
 
-Retornar preço final com desconto
-
-👤 Usuários
-
-Criar conta (registro)
-
-Login com email e senha
-
-Autenticação usando JWT
-
-Acesso protegido a rotas privadas
-
-Middleware de autenticação (auth-middleware.js)
-
-Tokens seguros com tempo de expiração
-
-🔐 Autenticação com JWT
-
-O projeto possui sistema completo de autenticação:
-
-✔ Registro
-
-Usuário cria uma conta com:
-
-{
-"name": "João",
-"cpf": "10203040501"
-"email": "joao@mail.com",
-"password": "123456"
-}
-
-✔ Login
-
-Retorna um JWT válido:
-{
-"message": "Login efetuado com sucesso",
-"token": "eyJh..."
-}
-
-✔ Middleware de Autenticação (auth-middleware.js)
-
-Lê o token enviado no header
-
-Valida o JWT
-
-Bloqueia rotas privadas se o token for inválido
-
-Injeta req.user com dados do usuário autenticado
-
-Exemplo de uso:
-
-router.get("/minha-conta", authMiddleware, controller.me);
-🚀 Tecnologias utilizadas
-
-Node.js
-
-Express
-
-MongoDB Atlas
-
-Mongoose
-
-JSON Web Token (JWT)
-
-Bcrypt.js (hash de senhas)
-
-Cors
-
-Nodemon
-
-Arquitetura MVC
-
-📁 Estrutura do projeto
+```
 /backend-supermercado
+│── /scripts
+│   ├── seed_products.js    # Popula o MongoDB com produtos variados
+│   └── seed_vectors.js     # Sincroniza os produtos do MongoDB para o ChromaDB
 │── /src
-│ ├── /controllers
-│ │ ├── productController.js
-│ │ └── userController.js
-│ ├── /middlewares
-│ │ └── auth-middleware.js
-│ ├── /models
-│ │ ├── productModel.js
-│ │ └── userModel.js
-│ ├── /routes
-│ │ ├── productRoutes.js
-│ │ └── userRoutes.js
-│ ├── server.js
+│   ├── /controllers        # Controladores de Produtos, Usuários e do Chatbot
+│   ├── /middlewares        # Autenticação JWT
+│   ├── /models             # Mongoose Schemas
+│   ├── /routers            # Rotas da API (/api/shopping, /api/product, etc)
+│   ├── /services
+│   │   ├── chroma.js       # Comunicação com Banco Vetorial
+│   │   ├── llm.js          # Comunicação com a API do Gemini
+│   │   └── mongodb.js      # Gerenciamento da conexão com o Banco
+│── server.js               # Ponto de entrada do Backend
 │── package.json
 │── .env
+│── .gitignore
 │── README.md
+```
 
-🔧 Configuração
-1️⃣ Instalar dependências
+## 🔧 Configuração e Instalação
+
+1️⃣ **Instalar dependências**
+```bash
 npm install
+```
 
-2️⃣ Criar arquivo .env
-PORT=5000
-MONGO_URI=mongodb+srv://...
-JWT_SECRET=sua_chave_secreta
+2️⃣ **Configurar o `.env`**
+Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
+```env
+PORT=3001
+DB_CONNECTION_STRING=SuaStringDeConexaoMongo
+JWT_SECRET=SuaChaveSecreta
+GEMINI_API_KEY=SuaChaveGeradaNoGoogleAIStudio
+```
 
-▶️ Rodar o servidor
-Desenvolvimento
+3️⃣ **Iniciar o Banco Vetorial (ChromaDB)**
+Tenha o Docker rodando na sua máquina e execute:
+```bash
+docker run -d -p 8000:8000 --name chromadb chromadb/chroma
+```
+
+4️⃣ **Sincronizar Banco de Dados**
+Para criar produtos fictícios e enviá-los para o banco vetorial, rode:
+```bash
+node scripts/seed_products.js
+node scripts/seed_vectors.js
+```
+
+5️⃣ **Rodar o Servidor**
+```bash
 npm run dev
+```
+O servidor iniciará em `http://localhost:3001`.
 
-Produção
-npm start
+## 🔐 Como Testar a Inteligência Artificial
 
-Servidor iniciará em:
+Com o servidor rodando, faça um **POST** para a rota `/api/shopping/ask` passando a pergunta no Body:
 
-http://localhost:5000
+**Body:**
+```json
+{
+  "question": "Quero um café da manhã gastando até 50 reais."
+}
+```
 
-🔐 Exemplos de Rotas Protegidas
-✔ Acessando uma rota protegida
+**Resposta da IA (Exemplo JSON gerado automaticamente com itens do banco):**
+```json
+{
+  "mensagem": "Vi que você quer fazer um café da manhã! ...",
+  "itensSugeridos": [
+    {
+      "id": "6677abc123...",
+      "nome": "Café Pilão",
+      "quantidade": 1,
+      "precoUnitario": 18.9,
+      "precoTotalItem": 18.9
+    }
+  ],
+  "totalEstimado": 44.60
+}
+```
 
-Header necessário:
-
-Authorization: Bearer SEU_TOKEN_AQUI
-
-Exemplo:
-
-GET /users/minha-conta
-
-🧩 Próximas implementações
-
-Refresh Token
-
-Recuperação de senha via email
-
-Sistema de carrinho de compras
-
-Estoque automatizado
-
-Painel admin para promoções
-
-👨‍💻 Autor
-
-Maurickson Xavier — Sistema de Supermercado
+## 👨‍💻 Autor
+Maurickson Xavier — Sistema de Supermercado Inteligente
