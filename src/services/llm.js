@@ -4,7 +4,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 // A chave pode ser obtida gratuitamente no Google AI Studio (aistudio.google.com)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "COLOQUE_A_CHAVE_AQUI");
 
-async function generateShoppingList(userQuery, retrievedProducts) {
+async function generateShoppingList(userQuery, retrievedProducts, history = []) {
   if (!retrievedProducts || retrievedProducts.length === 0) {
     return "Desculpe, não encontrei produtos correspondentes na nossa loja para essa busca.";
   }
@@ -18,14 +18,20 @@ async function generateShoppingList(userQuery, retrievedProducts) {
   // Formata os produtos para o LLM entender (agora passando o ID também)
   const productListStr = retrievedProducts.map(p => `- ID: ${p.id} | ${p.name}: R$ ${p.price}`).join('\n');
 
+  let historyStr = '';
+  if (history && history.length > 0) {
+    historyStr = "Histórico recente da conversa (lembre-se do que você já sugeriu para poder alterar itens se o cliente pedir):\n" + 
+      history.map(h => `Cliente: "${h.userQuery}"\nAssistente (Você): ${JSON.stringify(h.assistantResponse)}`).join('\n\n') + "\n\n";
+  }
+
   const prompt = `
 Você é um assistente virtual de um supermercado inteligente.
 Sua missão é sugerir os produtos disponíveis que melhor atendam à pergunta do cliente e caibam no orçamento (se informado).
 
-Produtos disponíveis (use APENAS estes produtos e seus IDs):
+${historyStr}Produtos disponíveis (use APENAS estes produtos e seus IDs):
 ${productListStr}
 
-Pergunta do cliente: "${userQuery}"
+Pergunta ATUAL do cliente: "${userQuery}"
 
 Retorne um objeto JSON estrito (application/json) com o seguinte formato:
 {
