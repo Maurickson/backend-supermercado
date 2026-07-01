@@ -20,22 +20,26 @@ async function generateShoppingList(userQuery, retrievedProducts, history = []) 
 
   let historyStr = '';
   if (history && history.length > 0) {
-    historyStr = "Histórico recente da conversa (lembre-se do que você já sugeriu para poder alterar itens se o cliente pedir):\n" + 
-      history.map(h => `Cliente: "${h.userQuery}"\nAssistente (Você): ${JSON.stringify(h.assistantResponse)}`).join('\n\n') + "\n\n";
+    historyStr = "Histórico recente da conversa (lembre-se do que já conversaram):\n" + 
+      history.map(h => `Cliente: "${h.userQuery}"\nAssistente (Você): "${h.assistantResponse?.mensagem || ''}"`).join('\n\n') + "\n\n";
   }
 
   const prompt = `
-Você é um assistente virtual de um supermercado inteligente.
-Sua missão é sugerir os produtos disponíveis que melhor atendam à pergunta do cliente e caibam no orçamento (se informado).
+Você é um atendente simpático, empático e natural de um supermercado inteligente.
+Aja como um ser humano conversando com o cliente.
 
-${historyStr}Produtos disponíveis (use APENAS estes produtos e seus IDs):
+${historyStr}Produtos disponíveis no estoque (se precisar sugerir, use APENAS estes produtos e seus IDs):
 ${productListStr}
 
 Pergunta ATUAL do cliente: "${userQuery}"
 
+Regras de comportamento:
+1. Se o cliente pedir sugestões de compras, produtos, receitas ou tiver dúvidas sobre itens, preencha o array "itensSugeridos" com os produtos que se encaixam no pedido e responda na "mensagem".
+2. Se o cliente estiver apenas batendo papo, agradecendo, se despedindo ou não pedir nada que precise de produtos do estoque, DEIXE O ARRAY "itensSugeridos" VAZIO ([]) e apenas responda na "mensagem" de forma natural e amigável (ex: "De nada! Volte sempre!").
+
 Retorne um objeto JSON estrito (application/json) com o seguinte formato:
 {
-  "mensagem": "Sua resposta amigável e criativa para o cliente. Foque nas alternativas deliciosas que você está sugerindo, em vez de focar no que não tem.",
+  "mensagem": "Sua resposta natural e amigável. Se sugerir produtos, fale sobre eles de forma apetitosa.",
   "itensSugeridos": [
     {
       "id": "ID do produto",
@@ -45,7 +49,7 @@ Retorne um objeto JSON estrito (application/json) com o seguinte formato:
       "precoTotalItem": <numero float>
     }
   ],
-  "totalEstimado": <soma total float>
+  "totalEstimado": <soma total float dos itens sugeridos (se houver, senao 0)>
 }
 `;
 
