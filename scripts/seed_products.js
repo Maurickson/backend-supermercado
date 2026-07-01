@@ -25,13 +25,46 @@ const newProducts = [
   { name: 'Papel Higiênico Folha Dupla (4 rolos)', type: 'Higiene Pessoal', description: 'Papel higiênico macio', price: 6.90, stock: 80, quantitySold: 0, validity: new Date('2030-01-01') },
   { name: 'Detergente Líquido Ypê Neutro 500ml', type: 'Limpeza', description: 'Detergente para louças', price: 2.20, stock: 200, quantitySold: 0, validity: new Date('2028-01-01') },
   { name: 'Coxão Mole Bovino (1kg)', type: 'Açougue', description: 'Carne bovina fresca', price: 35.90, stock: 15, quantitySold: 0, validity: new Date('2026-06-25') },
-  { name: 'Cebola Branca (1kg)', type: 'Hortifruti', description: 'Cebola a granel', price: 4.50, stock: 50, quantitySold: 0, validity: new Date('2026-07-10') }
+  { name: 'Cebola Branca (1kg)', type: 'Hortifruti', description: 'Cebola a granel', price: 4.50, stock: 50, quantitySold: 0, validity: new Date('2026-07-10') },
+  
+  // Bebidas
+  { name: 'Coca-Cola 2L', type: 'Bebidas', description: 'Refrigerante Cola', price: 9.99, stock: 100, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Cerveja Heineken Long Neck 330ml', type: 'Bebidas', description: 'Cerveja puro malte', price: 6.50, stock: 120, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Vinho Tinto Cabernet Sauvignon 750ml', type: 'Bebidas', description: 'Vinho tinto seco', price: 45.00, stock: 30, quantitySold: 0, validity: new Date('2030-01-01') },
+  { name: 'Água Mineral sem Gás 1.5L', type: 'Bebidas', description: 'Água mineral natural', price: 3.20, stock: 200, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Refrigerante Guaraná Antarctica 2L', type: 'Bebidas', description: 'Refrigerante sabor guaraná', price: 8.50, stock: 80, quantitySold: 0, validity: new Date('2027-01-01') },
+
+  // Sobremesas
+  { name: 'Sorvete Kibon Napolitano 1.5L', type: 'Sobremesas', description: 'Sorvete 3 sabores', price: 22.90, stock: 40, quantitySold: 0, validity: new Date('2026-12-01') },
+  { name: 'Pudim de Leite Condensado 500g', type: 'Sobremesas', description: 'Pudim pronto para consumo', price: 15.90, stock: 20, quantitySold: 0, validity: new Date('2026-07-10') },
+  { name: 'Barra de Chocolate Garoto Ao Leite 90g', type: 'Sobremesas', description: 'Chocolate ao leite', price: 5.50, stock: 150, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Goiabada Cascão 300g', type: 'Sobremesas', description: 'Doce de goiaba tradicional', price: 7.80, stock: 50, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Leite Condensado Moça 395g', type: 'Mercearia', description: 'Leite condensado integral', price: 6.99, stock: 100, quantitySold: 0, validity: new Date('2027-01-01') },
+
+  // Entradas e Petiscos
+  { name: 'Pão de Alho Tradicional 400g', type: 'Padaria', description: 'Pão de alho para churrasco', price: 12.90, stock: 60, quantitySold: 0, validity: new Date('2026-08-01') },
+  { name: 'Queijo Coalho no Espeto 300g', type: 'Laticínios', description: 'Queijo coalho para assar', price: 18.50, stock: 40, quantitySold: 0, validity: new Date('2026-08-01') },
+  { name: 'Patê de Atum 150g', type: 'Mercearia', description: 'Patê sabor atum', price: 6.20, stock: 40, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Torrada Salgada Bauducco 140g', type: 'Biscoitos', description: 'Torradas crocantes', price: 4.50, stock: 80, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Azeitona Verde Sem Caroço 200g', type: 'Mercearia', description: 'Azeitonas em conserva', price: 8.90, stock: 50, quantitySold: 0, validity: new Date('2027-01-01') },
+
+  // Pratos Principais (Ingredientes)
+  { name: 'Peito de Frango Congelado 1kg', type: 'Açougue', description: 'Cortes de peito de frango', price: 19.90, stock: 50, quantitySold: 0, validity: new Date('2026-12-01') },
+  { name: 'Picanha Bovina Fatiada 1kg', type: 'Açougue', description: 'Picanha premium fatiada', price: 89.90, stock: 15, quantitySold: 0, validity: new Date('2026-08-01') },
+  { name: 'Macarrão Espaguete Barilla 500g', type: 'Mercearia', description: 'Massa de sêmola grano duro', price: 7.90, stock: 100, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Feijão Carioca 1kg', type: 'Mercearia', description: 'Feijão carioca tipo 1', price: 8.50, stock: 120, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Arroz Branco 5kg', type: 'Mercearia', description: 'Arroz branco tipo 1', price: 24.90, stock: 80, quantitySold: 0, validity: new Date('2027-01-01') },
+  { name: 'Filé de Salmão Congelado 500g', type: 'Peixaria', description: 'Salmão fresco congelado', price: 45.00, stock: 20, quantitySold: 0, validity: new Date('2026-10-01') }
 ];
 
 async function seedProducts() {
   await connectDB();
 
   try {
+    console.log('Limpando coleção atual de produtos...');
+    await Product.deleteMany({});
+    
+    console.log('Inserindo novos produtos...');
     await Product.insertMany(newProducts);
     console.log(`✅ ${newProducts.length} produtos adicionados com sucesso ao banco!`);
     
