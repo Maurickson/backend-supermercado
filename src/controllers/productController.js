@@ -1,4 +1,5 @@
 const productModel = require('../models/productModel');
+const { assertSafeUrl } = require('../utils/ssrf-guard');
 
 // Função para calcular promoção
 function applyPromotion(product) {
@@ -106,10 +107,61 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+// POST — importar imagem do produto a partir de uma URL (demonstra proteção contra SSRF - OWASP A10)
+const updateProductImageFromUrl = async (req, res) => {
+  try {
+    const { imageUrl } = req.body;
+    if (typeof imageUrl !== 'string' || !imageUrl) {
+      return res.status(400).json({ message: 'imageUrl é obrigatório.' });
+    }
+
+    // --- OWASP A10 · SSRF ---
+    // VERSÃO VULNERÁVEL (NÃO USAR): buscaria qualquer URL enviada pelo cliente,
+    // permitindo alcançar a rede interna (ex: http://localhost:8000, http://169.254.169.254):
+    //   const response = await fetch(imageUrl);
+    //
+    // VERSÃO PROTEGIDA: valida a URL (só http/https e sem IPs internos/privados) antes de acessá-la.
+    let safeUrl;
+    try {
+      safeUrl = await assertSafeUrl(imageUrl);
+    } catch (err) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    // Busca a imagem com timeout e sem seguir redirects (evita bypass do filtro via redirect)
+    const response = await fetch(safeUrl, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(5000),
+    });
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!response.ok || !contentType.startsWith('image/')) {
+      return res
+        .status(400)
+        .json({ message: 'A URL não aponta para uma imagem válida.' });
+    }
+
+    const updated = await productModel.findByIdAndUpdate(
+      req.params.id,
+      { imageUrl },
+      { new: true }
+    );
+    if (!updated) {
+      return res.status(404).json({ message: 'Produto não encontrado!' });
+    }
+
+    res.status(200).json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Erro ao importar imagem do produto.' });
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   createProduct,
   updateProduct,
   deleteProduct,
+  updateProductImageFromUrl,
 };

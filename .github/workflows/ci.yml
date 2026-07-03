@@ -1,0 +1,30 @@
+# OWASP A08 · Software & Data Integrity Failures
+# Este pipeline usa `npm ci`, que instala EXATAMENTE as versões travadas no
+# package-lock.json e valida o hash de integridade de cada pacote. Isso impede
+# que um pacote adulterado ("pipeline aceita qualquer pacote que vier") entre no build.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependências (verifica integridade via lockfile)
+        run: npm ci
+
+      - name: Auditoria de segurança das dependências
+        run: npm audit --audit-level=high
+
+      - name: Lint
+        run: npx eslint src server.js

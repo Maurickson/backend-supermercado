@@ -8,6 +8,7 @@ const mid = require('../auth-middleware');
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductById);
 router.post('/', mid, productController.createProduct);
+router.post('/:id/image-from-url', mid, productController.updateProductImageFromUrl);
 router.put('/:id', mid, productController.updateProduct);
 router.delete('/:id', mid, productController.deleteProduct);
 
