@@ -2,11 +2,13 @@ const express = require('express');
 const router = express.Router();
 
 const productController = require('../controllers/productController');
+const mid = require('../auth-middleware');
 
+// Leitura de produtos é pública (vitrine); escrita exige autenticação (painel admin)
 router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProductById);
-router.post('/', productController.createProduct);
-router.put('/:id', productController.updateProduct);
-router.delete('/:id', productController.deleteProduct);
+router.post('/', mid, productController.createProduct);
+router.put('/:id', mid, productController.updateProduct);
+router.delete('/:id', mid, productController.deleteProduct);
 
 module.exports = router;

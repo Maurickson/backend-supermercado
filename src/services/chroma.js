@@ -1,12 +1,29 @@
-const { ChromaClient } = require('chromadb');
+const { ChromaClient, CloudClient } = require('chromadb');
+const { DefaultEmbeddingFunction } = require('@chroma-core/default-embed');
 
-// Conecta ao ChromaDB rodando no Docker (porta padrão 8000)
-const client = new ChromaClient({ path: 'http://localhost:8000' });
+// CHROMA_MODE=cloud (padrão) usa o Chroma Cloud; CHROMA_MODE=local usa um Chroma
+// rodando localmente (ex: via Docker em http://localhost:8000).
+const isLocal = (process.env.CHROMA_MODE || 'cloud').toLowerCase() === 'local';
+
+const client = isLocal
+  ? new ChromaClient({ path: process.env.CHROMA_LOCAL_URL || 'http://localhost:8000' })
+  : new CloudClient({
+      apiKey: process.env.CHROMA_API_KEY,
+      tenant: process.env.CHROMA_TENANT,
+      database: process.env.CHROMA_DATABASE,
+    });
+
+console.log(`🧠 ChromaDB em modo: ${isLocal ? 'LOCAL' : 'CLOUD'}`);
+
 const COLLECTION_NAME = 'products';
+
+// Gera os embeddings localmente (roda no próprio Node), sem custo de API externa
+const embeddingFunction = new DefaultEmbeddingFunction();
 
 async function getCollection() {
   return await client.getOrCreateCollection({
     name: COLLECTION_NAME,
+    embeddingFunction,
     metadata: { "hnsw:space": "cosine" } // Usa similaridade de cosseno
   });
 }

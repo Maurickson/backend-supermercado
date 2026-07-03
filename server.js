@@ -9,9 +9,11 @@ const connectDB = require('./src/services/mongodb');
 
 const app = express();
 const cors = require('cors');
+const morgan = require('morgan');
 
 app.use(express.json());
-app.use(cors('*'));
+app.use(cors());
+app.use(morgan('dev'));
 
 // --- ROTAS ---
 app.use('/api/user', userRoutes);

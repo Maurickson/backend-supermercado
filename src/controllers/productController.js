@@ -33,7 +33,8 @@ const getAllProducts = async (req, res) => {
     const withPromo = all.map(applyPromotion);
 
     res.status(200).json(withPromo);
-  } catch {
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Erro ao buscar produtos' });
   }
 };
@@ -48,7 +49,8 @@ const getProductById = async (req, res) => {
     }
 
     res.status(200).json(applyPromotion(product));
-  } catch {
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Erro ao buscar o produto' });
   }
 };
@@ -59,6 +61,7 @@ const createProduct = async (req, res) => {
     const created = await productModel.create(req.body);
     res.status(201).json(created);
   } catch (error) {
+    console.error(error);
     res
       .status(500)
       .json({ message: 'Erro ao criar produto!', error: error.message });
@@ -81,7 +84,8 @@ const updateProduct = async (req, res) => {
     }
 
     res.status(200).json(updated);
-  } catch {
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Erro ao atualizar o produto' });
   }
 };
@@ -96,7 +100,8 @@ const deleteProduct = async (req, res) => {
     }
 
     res.status(200).json({ message: 'Produto deletado com sucesso!' });
-  } catch {
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Erro ao deletar o produto!' });
   }
 };

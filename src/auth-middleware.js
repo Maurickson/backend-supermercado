@@ -1,12 +1,8 @@
 const jwt = require('jsonwebtoken');
-const mid = (req, res, next) => {
-  // Verifica se a rota tem autenticação liberada
-  const noAuthRoutes = ['api/user/login', '/api/user'];
-  // http://127.0.0.1:3001/api/user/login
-  if (noAuthRoutes.includes(req.path) && req.method === 'POST') {
-    return next();
-  }
 
+// Este middleware é aplicado apenas nas rotas que exigem autenticação
+// (ver userRoutes.js e productRoutes.js); rotas públicas simplesmente não o usam.
+const mid = (req, res, next) => {
   // Verifica se o token foi enviado na requisição
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
